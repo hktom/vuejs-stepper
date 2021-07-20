@@ -7,7 +7,7 @@
           'step-header': true,
           active: index <= currentPosition,
           start: index === 0,
-          end: index === options.headers.length
+          end: index === options.headers.length,
         }"
         :key="index"
       >
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       currentPosition: 0,
-      transitionType: "slide"
+      transitionType: "slide",
     };
   },
   methods: {
@@ -79,27 +79,45 @@ export default {
       if (this.options.dispatch) {
         this.options.payload.step = this.currentPosition;
         this.$store
-          .dispatch("stepper_next", this.options.payload)
+          .dispatch(this.options.dispatcher, this.options.payload)
           .then(() => this.$router.push(this.options.router));
-        return;
       }
 
       if (this.options.router) {
-        this.$router.push(this.options.router);
-        return;
+        return this.$router.push(this.options.router);
       }
+    },
+    slide_dispatch(index) {
+      this.options.payload.step = this.currentPosition;
+      this.$store
+        .dispatch(this.options.action_to_dispatch, this.options.payload_next)
+        .then(() => {
+          this.currentPosition = index;
+        });
+    },
+
+    next_dispatch() {
+      this.options.payload.step = this.currentPosition;
+      this.$store
+        .dispatch(this.options.dispatcher, this.options.payload_next)
+        .then(() => {
+          this.currentPosition++;
+        });
+    },
+    prev_dispatch() {
+      this.options.payload.step = this.currentPosition;
+      this.$store
+        .dispatch(this.options.action_to_dispatch, this.options.payload_next)
+        .then(() => {
+          this.currentPosition--;
+        });
     },
     next() {
       if (this.currentPosition < this.options.headers.length - 1) {
         this.transitionType = "stepper-slide-1";
 
-        if (this.options.dispatch_next) {
-          this.options.payload.step = this.currentPosition;
-          this.$store
-            .dispatch("stepper_next", this.options.payload_next)
-            .then(result => {
-              this.currentPosition++;
-            });
+        if (this.options.dispatch) {
+          this.next_dispatch();
         } else {
           this.currentPosition++;
         }
@@ -108,7 +126,11 @@ export default {
     prev() {
       if (this.currentPosition > 0) {
         this.transitionType = "stepper-slide-2";
-        this.currentPosition--;
+        if (this.this.options.dispatch) {
+          this.prev_dispatch();
+        } else {
+          this.currentPosition--;
+        }
       }
     },
     slideTo(index) {
@@ -118,9 +140,10 @@ export default {
       } else {
         this.transitionType = "stepper-slide-1";
       }
-      this.currentPosition = index;
-    }
-  }
+      this.slide_dispatch(index);
+      //this.currentPosition = index;
+    },
+  },
 };
 </script>
 <style src="./Stepper.css" scoped></style>
