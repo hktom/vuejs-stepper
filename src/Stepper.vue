@@ -77,9 +77,8 @@ export default {
   methods: {
     goTo() {
       if (this.options.dispatch) {
-        this.options.payload.step = this.currentPosition;
         this.$store
-          .dispatch(this.options.dispatcher, this.options.payload)
+          .dispatch(this.options.dispatcher, this.currentPosition)
           .then(() => this.$router.push(this.options.router));
       }
 
@@ -88,26 +87,23 @@ export default {
       }
     },
     slide_dispatch(index) {
-      this.options.payload.step = this.currentPosition;
       this.$store
-        .dispatch(this.options.dispatcher, this.options.payload)
+        .dispatch(this.options.dispatcher, index)
         .then(() => {
           this.currentPosition = index;
         });
     },
 
     next_dispatch() {
-      this.options.payload.step = this.currentPosition;
       this.$store
-        .dispatch(this.options.dispatcher, this.options.payload)
+        .dispatch(this.options.dispatcher, this.currentPosition)
         .then(() => {
           this.currentPosition++;
         });
     },
     prev_dispatch() {
-      this.options.payload.step = this.currentPosition--;
       this.$store
-        .dispatch(this.options.dispatcher, this.options.payload)
+        .dispatch(this.options.dispatcher, this.currentPosition--)
         .then(() => {
           this.currentPosition--;
         });
@@ -141,7 +137,6 @@ export default {
         this.transitionType = "stepper-slide-1";
       }
       this.slide_dispatch(index);
-      //this.currentPosition = index;
     },
   },
 };
