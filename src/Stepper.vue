@@ -7,7 +7,7 @@
           'step-header': true,
           active: index <= currentPosition,
           start: index === 0,
-          end: index === options.headers.length,
+          end: index === options.headers.length
         }"
         :key="index"
       >
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div style="width:100%">
+    <div style="width: 100%">
       <transition-group :name="transitionType" class="body" mode="out-in">
         <div
           v-for="(item, index) in options.headers"
@@ -67,53 +67,24 @@
 <script>
 export default {
   name: "Stepper",
-  props: ["options"],
+  props: ["options", "next_dispatch", "prev_dispatch", "slide_dispatch", "go"],
   data() {
     return {
       currentPosition: 0,
-      transitionType: "slide",
+      transitionType: "slide"
     };
   },
   methods: {
     goTo() {
-      if (this.options.dispatch) {
-        this.$store
-          .dispatch(this.options.dispatcher, this.currentPosition)
-          .then(() => this.$router.push(this.options.router));
-      }
-
-      if (this.options.router) {
-        return this.$router.push(this.options.router);
-      }
-    },
-    slide_dispatch(index) {
-      this.$store
-        .dispatch(this.options.dispatcher, index)
-        .then(() => {
-          this.currentPosition = index;
-        });
+      if (this.next_dispatch(this.currentPosition)) this.go();
     },
 
-    next_dispatch() {
-      this.$store
-        .dispatch(this.options.dispatcher, this.currentPosition)
-        .then(() => {
-          this.currentPosition++;
-        });
-    },
-    prev_dispatch() {
-      this.$store
-        .dispatch(this.options.dispatcher, this.currentPosition--)
-        .then(() => {
-          this.currentPosition--;
-        });
-    },
     next() {
       if (this.currentPosition < this.options.headers.length - 1) {
         this.transitionType = "stepper-slide-1";
 
         if (this.options.dispatch) {
-          this.next_dispatch();
+          if (this.next_dispatch(this.currentPosition)) this.currentPosition++;
         } else {
           this.currentPosition++;
         }
@@ -123,7 +94,7 @@ export default {
       if (this.currentPosition > 0) {
         this.transitionType = "stepper-slide-2";
         if (this.options.dispatch) {
-          this.prev_dispatch();
+          if (this.prev_dispatch(this.currentPosition)) this.currentPosition--;
         } else {
           this.currentPosition--;
         }
@@ -136,9 +107,15 @@ export default {
       } else {
         this.transitionType = "stepper-slide-1";
       }
-      this.slide_dispatch(index);
-    },
-  },
+
+      if (this.options.dispatch) {
+        return;
+        //if (this.slide_dispatch(index)) this.currentPosition = index;
+      } else {
+        this.currentPosition = index;
+      }
+    }
+  }
 };
 </script>
 <style src="./Stepper.css" scoped></style>
