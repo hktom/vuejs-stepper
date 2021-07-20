@@ -105,7 +105,7 @@ export default {
         });
     },
     prev_dispatch() {
-      this.options.payload.step = this.currentPosition;
+      this.options.payload.step = this.currentPosition--;
       this.$store
         .dispatch(this.options.dispatcher, this.options.payload)
         .then(() => {
