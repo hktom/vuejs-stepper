@@ -90,7 +90,7 @@ export default {
     slide_dispatch(index) {
       this.options.payload.step = this.currentPosition;
       this.$store
-        .dispatch(this.options.action_to_dispatch, this.options.payload_next)
+        .dispatch(this.options.dispatcher, this.options.payload)
         .then(() => {
           this.currentPosition = index;
         });
@@ -99,7 +99,7 @@ export default {
     next_dispatch() {
       this.options.payload.step = this.currentPosition;
       this.$store
-        .dispatch(this.options.dispatcher, this.options.payload_next)
+        .dispatch(this.options.dispatcher, this.options.payload)
         .then(() => {
           this.currentPosition++;
         });
@@ -107,7 +107,7 @@ export default {
     prev_dispatch() {
       this.options.payload.step = this.currentPosition;
       this.$store
-        .dispatch(this.options.action_to_dispatch, this.options.payload_next)
+        .dispatch(this.options.dispatcher, this.options.payload)
         .then(() => {
           this.currentPosition--;
         });
@@ -126,7 +126,7 @@ export default {
     prev() {
       if (this.currentPosition > 0) {
         this.transitionType = "stepper-slide-2";
-        if (this.this.options.dispatch) {
+        if (this.options.dispatch) {
           this.prev_dispatch();
         } else {
           this.currentPosition--;
